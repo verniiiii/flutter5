@@ -4,7 +4,7 @@ class Transaction {
   final String description;
   final double amount;
   final DateTime createdAt;
-  final bool isExpense; // true - расход, false - доход
+  final TransactionType type; // Используем enum вместо boolean
   final String category;
 
   const Transaction({
@@ -13,7 +13,7 @@ class Transaction {
     required this.description,
     required this.amount,
     required this.createdAt,
-    required this.isExpense,
+    required this.type,
     required this.category,
   });
 
@@ -23,7 +23,7 @@ class Transaction {
     String? description,
     double? amount,
     DateTime? createdAt,
-    bool? isExpense,
+    TransactionType? type,
     String? category,
   }) {
     return Transaction(
@@ -32,8 +32,21 @@ class Transaction {
       description: description ?? this.description,
       amount: amount ?? this.amount,
       createdAt: createdAt ?? this.createdAt,
-      isExpense: isExpense ?? this.isExpense,
+      type: type ?? this.type,
       category: category ?? this.category,
     );
   }
+
+  // Вспомогательные геттеры
+  bool get isExpense => type == TransactionType.expense;
+  bool get isIncome => type == TransactionType.income;
+}
+
+// Тип транзакции
+enum TransactionType {
+  income('Доход'),
+  expense('Расход');
+
+  const TransactionType(this.displayName);
+  final String displayName;
 }

@@ -2,38 +2,38 @@ import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import '../data/categories.dart';
 
-class TransactionFormScreen extends StatefulWidget {
-  final void Function(String title, String description, double amount, TransactionType type, String category) onSave;
+class EditTransactionScreen extends StatefulWidget {
+  final Transaction transaction;
+  final void Function(Transaction) onUpdate;
   final VoidCallback onCancel;
 
-  const TransactionFormScreen({
+  const EditTransactionScreen({
     super.key,
-    required this.onSave,
+    required this.transaction,
+    required this.onUpdate,
     required this.onCancel,
   });
 
   @override
-  State<TransactionFormScreen> createState() => _TransactionFormScreenState();
+  State<EditTransactionScreen> createState() => _EditTransactionScreenState();
 }
 
-class _TransactionFormScreenState extends State<TransactionFormScreen> {
+class _EditTransactionScreenState extends State<EditTransactionScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
 
-  TransactionType _type = TransactionType.expense;
-  String _selectedCategory = TransactionCategories.expenseCategories[0];
+  late TransactionType _type;
+  late String _selectedCategory;
 
   @override
   void initState() {
     super.initState();
-    _updateCategories();
-  }
-
-  void _updateCategories() {
-    setState(() {
-      _selectedCategory = TransactionCategories.getDefaultCategoryForType(_type);
-    });
+    _titleController.text = widget.transaction.title;
+    _descriptionController.text = widget.transaction.description;
+    _amountController.text = widget.transaction.amount.toStringAsFixed(2);
+    _type = widget.transaction.type;
+    _selectedCategory = widget.transaction.category;
   }
 
   void _submit() {
@@ -46,7 +46,15 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
       return;
     }
 
-    widget.onSave(title, description, amount, _type, _selectedCategory);
+    final updatedTransaction = widget.transaction.copyWith(
+      title: title,
+      description: description,
+      amount: amount,
+      type: _type,
+      category: _selectedCategory,
+    );
+
+    widget.onUpdate(updatedTransaction);
   }
 
   void _showError(String message) {
@@ -64,7 +72,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Новая транзакция'),
+        title: const Text('Редактировать транзакцию'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: widget.onCancel,
@@ -74,7 +82,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Тип транзакции (доход/расход)
+            // Тип транзакции
             SegmentedButton<TransactionType>(
               segments: [
                 ButtonSegment<TransactionType>(
@@ -92,14 +100,13 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
               onSelectionChanged: (Set<TransactionType> newSelection) {
                 setState(() {
                   _type = newSelection.first;
-                  _updateCategories();
+                  _selectedCategory = TransactionCategories.getDefaultCategoryForType(_type);
                 });
               },
             ),
 
             const SizedBox(height: 20),
 
-            // Поле названия
             TextField(
               controller: _titleController,
               decoration: const InputDecoration(
@@ -110,7 +117,6 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Поле описания
             TextField(
               controller: _descriptionController,
               decoration: const InputDecoration(
@@ -122,7 +128,6 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Поле суммы
             TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,
@@ -135,7 +140,6 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Выбор категории
             DropdownButtonFormField<String>(
               value: _selectedCategory,
               decoration: const InputDecoration(
@@ -157,13 +161,28 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
 
             const SizedBox(height: 30),
 
-            // Кнопка сохранения
-            ElevatedButton(
-              onPressed: _submit,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('Добавить транзакцию'),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: widget.onCancel,
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 50),
+                    ),
+                    child: const Text('Отмена'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _submit,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 50),
+                    ),
+                    child: const Text('Сохранить'),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
