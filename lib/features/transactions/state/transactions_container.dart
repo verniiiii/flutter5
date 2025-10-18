@@ -5,7 +5,6 @@ import '../screens/transaction_form_screen.dart';
 import '../screens/edit_transaction_screen.dart';
 import '../screens/statistics_screen.dart';
 
-// Обновляем enum для поддержки редактирования
 enum Screen { list, form, statistics, edit }
 
 class TransactionsContainer extends StatefulWidget {
@@ -17,10 +16,10 @@ class TransactionsContainer extends StatefulWidget {
 
 class _TransactionsContainerState extends State<TransactionsContainer> {
   final List<Transaction> _transactions = [];
-  final List<Transaction> _filteredTransactions = []; // Добавляем для поиска
+  final List<Transaction> _filteredTransactions = [];
   Screen _currentScreen = Screen.list;
   Transaction? _transactionToEdit;
-  bool _isSearching = false; // Добавляем флаг поиска
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -202,7 +201,7 @@ class _TransactionsContainerState extends State<TransactionsContainer> {
           transactions: _transactions,
           onBack: _showList,
         );
-      case Screen.edit: // Добавляем обработку экрана редактирования
+      case Screen.edit:
         if (_transactionToEdit != null) {
           return EditTransactionScreen(
             transaction: _transactionToEdit!,

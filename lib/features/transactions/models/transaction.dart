@@ -4,7 +4,7 @@ class Transaction {
   final String description;
   final double amount;
   final DateTime createdAt;
-  final TransactionType type; // Используем enum вместо boolean
+  final TransactionType type;
   final String category;
 
   const Transaction({

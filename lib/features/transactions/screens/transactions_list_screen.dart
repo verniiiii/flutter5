@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import '../widgets/transaction_list.dart';
-import '../widgets/search_transactions.dart'; // Добавляем импорт виджета поиска
+import '../widgets/search_transactions.dart';
 
 class TransactionsListScreen extends StatelessWidget {
   final List<Transaction> transactions;
@@ -13,9 +13,9 @@ class TransactionsListScreen extends StatelessWidget {
   final double totalIncome;
   final double totalExpenses;
   final VoidCallback onShowStatistics;
-  final ValueChanged<List<Transaction>> onSearchResults; // Добавляем параметр поиска
-  final bool isSearching; // Добавляем флаг поиска
-  final VoidCallback onClearSearch; // Добавляем очистку поиска
+  final ValueChanged<List<Transaction>> onSearchResults;
+  final bool isSearching;
+  final VoidCallback onClearSearch;
 
   const TransactionsListScreen({
     super.key,
@@ -28,9 +28,9 @@ class TransactionsListScreen extends StatelessWidget {
     required this.totalIncome,
     required this.totalExpenses,
     required this.onShowStatistics,
-    required this.onSearchResults, // Обязательный параметр
-    required this.isSearching, // Обязательный параметр
-    required this.onClearSearch, // Обязательный параметр
+    required this.onSearchResults,
+    required this.isSearching,
+    required this.onClearSearch,
   });
 
   @override
@@ -53,12 +53,10 @@ class TransactionsListScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Виджет поиска
           SearchTransactions(
             transactions: transactions,
             onSearchResults: onSearchResults,
           ),
-          // Показать кнопку очистки поиска, если идет поиск
           if (isSearching)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
